@@ -21,11 +21,7 @@ export default function Home() {
     const unsubscribe = auth.onAuthStateChanged(user => {
 <<<<<<< HEAD
       setUser(user)
-<<<<<<< HEAD
-      if (user === null ||user.displayName === null) {
-=======
       if (user === null || user.displayName === null) {
->>>>>>> 0060ba2ac4ec91c8f7d79886385a285fd4de7b45
         return
 =======
       setUser(user);
