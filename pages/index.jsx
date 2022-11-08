@@ -19,15 +19,9 @@ export default function Home() {
   console.log(userName);
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
-<<<<<<< HEAD
-      setUser(user)
-      if (user === null || user.displayName === null) {
-        return
-=======
       setUser(user);
       if (user === null || user.displayName === null) {
         return;
->>>>>>> 4225c6b2ff1ccb508a0274385b26ea5670b0b8e1
       } else {
         setUserName(user.displayName);
       }
