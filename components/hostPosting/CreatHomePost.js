@@ -21,6 +21,7 @@ import AppText from '../D3Components/AppText/AppText';
 import { useAuth } from '../../AuthContext/AuthContext'
 
 function CreatHomePost() {
+    const { currentUser } = useAuth()
 
     const [open, setOpen] = useState(false);
     const [alertType, setAlertType] = useState("success");
@@ -36,9 +37,6 @@ function CreatHomePost() {
         "Upload some photos of your place",
         "Review and Confirm"
     ]
-    const { currentUser } = useAuth()
-    console.log(currentUser)
-
 
     const showAlert = (type, message) => {
         setAlertType(type);
@@ -85,6 +83,10 @@ function CreatHomePost() {
         heating: 'yes',
 
         image: "",
+
+        userName: "",
+        userEmail: "",
+        userId: "",
 
     });
 
@@ -167,16 +169,20 @@ function CreatHomePost() {
         setPage(page + 1);
     }
 
-
     async function handleSubmit() {
         const collectionRef = collection(db, 'homes')
         console.log("formData", formData);
         const docRef = await addDoc(collectionRef, {
-            ...formData, timestamp:
-                serverTimestamp(),
+            ...formData,
+            userId: currentUser.uid ? currentUser.uid : "",
+            userName: currentUser.displayName ? currentUser.displayName : "",
+            userEmail: currentUser.email ? currentUser.email : "",
+            timestamp:
+                serverTimestamp()
         })
         showAlert('success', `Home with id ${docRef.id} added successfully`)
         router.push('/userhome')
+        return
     }
 
 
