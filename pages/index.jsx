@@ -15,8 +15,6 @@ export default function Home() {
 
   const [user, setUser] = useState(null);
   const [userName, setUserName] = useState(null);
-
-  console.log(userName);
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       setUser(user);
@@ -45,7 +43,7 @@ export default function Home() {
   function handleEvacueUsesr() {
     console.log("evacuee user");
     if (user) {
-      return <Button txt="Evacuee" icon={<LuggageIcon />} href="/evacuee" />;
+      return <Button txt="Evacuee" icon={<LuggageIcon />} href="/userhome" />;
     } else {
       return (
         <Button txt="Evacuee" icon={<LuggageIcon />} onBtnClick={togglePopup} />
