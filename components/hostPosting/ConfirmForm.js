@@ -128,10 +128,12 @@ export default function ConfirmForm({ formData }) {
         <div className='flex max-w-[200px] mt-5 gap-[17rem] pt-10'>
           <AppText
             txt="Images"
-            fontSize='20px'
-            color='#F5F5F5'
+            color='#F0E6D9'
+            fontSize='18px'
           />
-          <img src={formData.image} alt="No image uploaded" className='text-[#f5f5f5]' />
+          {formData.image.map((link, idx) => (
+            <img key={idx} src={link} alt="No image uploaded" className='text-[#f5f5f5]' />
+          ))}
         </div>
       </div>
     </>

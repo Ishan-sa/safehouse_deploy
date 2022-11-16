@@ -1,4 +1,3 @@
-import NavBar from "../Home/NavBar";
 import { CenterContainer } from "../../styles/styledComps";
 import Image from "../D3Components/Image/ImageComp.jsx";
 import Button from "../D3Components/Button/Button";
@@ -13,13 +12,15 @@ import { useState, useEffect } from "react";
 import Navbar from "../../components/D3Components/Navbar/Navbar";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { doc, getDoc, deleteDoc } from "firebase/firestore";
+import { db } from '../../firebase'
+import Swiper from '../D3COmponents/Swiper/Swiper'
 
 const Detail = ({ state }) => {
   const router = useRouter();
   const [isEdit, setIsEdit] = useState(false);
   const id = router.query.id;
   //edit post with user id
-
   const editHandler = () => {
     setIsEdit(true);
     router.push("/edit/" + id);
@@ -28,20 +29,26 @@ const Detail = ({ state }) => {
 
   const buttonHandler = () => { };
 
+  //delete post with user id
+  const deleteHandler = () => {
+    const docRef = doc(db, "homes", id);
+    deleteDoc(docRef);
+    window.confirm("Are you sure you want to delete this post?");
+    router.push("/userhome");
+  };
+
   return (
     <>
-      <div className="pb-10">
-        {/* {state?.image ? ( */}
-        <Image
-          src={state?.image ? state.image : ""}
-          width="2000px"
-          height="1300px"
-          altText="No Images uploaded"
-        />
-        {/* )
-          : (
-            " No image"
-          )} */}
+      <div>
+        <div className="absolute w-full h-auto">{/* <NavBar /> */}</div>
+        {state?.image
+          ? state.image.map(it => (
+            <Swiper
+              imgSrc={it ? it : ""}
+            />
+            // <Image src={it ? it : ""} width="2000px" height="1300px" />
+          ))
+          : " No image"}
 
         <div className="flex justify-around border-y-2 border-[#888] py-4 mb-4">
           <div>
@@ -50,7 +57,7 @@ const Detail = ({ state }) => {
           </div>
           <div>
             <DeleteIcon sx={{ color: "#4A4A4A" }} />
-            <button className="text-[#808080]" onClick={buttonHandler}>Delete Listing</button>
+            <button className="text-[#808080]" onClick={deleteHandler}>Delete Listing</button>
           </div>
         </div>
 
@@ -71,9 +78,6 @@ const Detail = ({ state }) => {
             />
           </div>
         </CenterContainer>
-        <Navbar
-          value="/userhome"
-        />
       </div>
     </>
   );
