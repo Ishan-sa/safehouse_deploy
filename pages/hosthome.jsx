@@ -11,6 +11,7 @@ export default function HostHome() {
   const [state, setState] = useState({
     addressLine1: "",
   });
+
   useEffect(() => {
     const homeRef = collection(db, "homes");
     const q = query(homeRef, orderBy("timestamp", "desc"));
