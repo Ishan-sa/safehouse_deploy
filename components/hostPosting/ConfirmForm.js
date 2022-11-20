@@ -6,10 +6,11 @@ import AppText from '../D3Components/AppText/AppText'
 
 
 export default function ConfirmForm({ formData }) {
+  console.log(formData)
   return (
     <>
-      <div className='flex flex-col justify-center items-start'>
-        <div className='flex gap-[17.9rem] pt-10'>
+      <div className='flex flex-col justify-start items-start w-[100%]'>
+        <div className='flex pt-10 justify-between w-full'>
           <AppText
             txt="Home Type"
             color='#F0E6D9'
@@ -21,7 +22,8 @@ export default function ConfirmForm({ formData }) {
             fontSize='18px'
           />
         </div>
-        <div className='flex gap-[14.2rem] pt-10'>
+
+        <div className='flex pt-10 justify-between w-full'>
           <AppText
             txt="Home description"
             color='#F0E6D9'
@@ -33,7 +35,8 @@ export default function ConfirmForm({ formData }) {
             fontSize='18px'
           />
         </div>
-        <div className='flex gap-[19.5rem] pt-10'>
+
+        <div className='flex pt-10 justify-between w-full'>
           <AppText
             txt="Address"
             color='#F0E6D9'
@@ -47,7 +50,7 @@ export default function ConfirmForm({ formData }) {
             <span>{formData.postalCode}</span>
           </div>
         </div>
-        <div className='flex gap-[15.5rem] pt-10'>
+        <div className='flex pt-10 justify-between w-full'>
           <AppText
             txt="Guests Allowed"
             color='#F0E6D9'
@@ -59,7 +62,8 @@ export default function ConfirmForm({ formData }) {
             fontSize='18px'
           />
         </div>
-        <div className='flex gap-[18.2rem] pt-10'>
+
+        <div className='flex pt-10 justify-between w-full'>
           <AppText
             txt="Bedrooms"
             color='#F0E6D9'
@@ -72,7 +76,7 @@ export default function ConfirmForm({ formData }) {
           />
         </div>
 
-        <div className='flex gap-[21.2rem] pt-10'>
+        <div className='flex pt-10 justify-between w-full'>
           <AppText
             txt="Beds"
             color='#F0E6D9'
@@ -85,7 +89,7 @@ export default function ConfirmForm({ formData }) {
           />
         </div>
 
-        <div className='flex gap-[17.7rem] pt-10'>
+        <div className='flex pt-10 justify-between w-full'>
           <AppText
             txt="Bathrooms"
             color='#F0E6D9'
@@ -98,7 +102,7 @@ export default function ConfirmForm({ formData }) {
           />
         </div>
 
-        <div className='flex gap-[19.6rem] pt-10'>
+        <div className='flex pt-10 justify-between w-full'>
           <AppText
             txt="Kitchen"
             color='#F0E6D9'
@@ -111,7 +115,7 @@ export default function ConfirmForm({ formData }) {
           />
         </div>
 
-        <div className='flex gap-[15.1rem] pt-10'>
+        <div className='flex pt-10 justify-between w-full'>
           <AppText
             txt="Parking Spaces"
             color='#F0E6D9'
@@ -122,22 +126,49 @@ export default function ConfirmForm({ formData }) {
             color='#F5F5F5'
             fontSize='18px'
           />
-
         </div>
 
-        <div className='flex max-w-[200px] mt-5 gap-[17rem] pt-10'>
+
+
+        <div className='flex pt-10 justify-between w-full'>
+          <AppText
+            txt="Phone number"
+            color='#F0E6D9'
+            fontSize='18px'
+          />
+          <AppText
+            txt={formData.phoneNumber}
+            color='#F5F5F5'
+            fontSize='18px'
+          />
+        </div>
+
+        <div className='flex pt-10 justify-between w-full'>
+          <AppText
+            txt="Email"
+            color='#F0E6D9'
+            fontSize='18px'
+          />
+          <AppText
+            txt={formData.email}
+            color='#F5F5F5'
+            fontSize='18px'
+          />
+        </div>
+
+        <div className='flex pt-10'>
           <AppText
             txt="Images"
             color='#F0E6D9'
             fontSize='18px'
           />
         </div>
-        
-        {formData.image&&formData.image.map((link, idx) => (
-          <div key={idx}>
-            < img src={link} alt="No image uploaded" className='text-[#f5f5f5]' />
-          </div>
-        ))}
+
+        <div className="grid grid-cols-2 gap-2 imageConfirmDiv place-items-center m-auto mt-5 bg-[#333] p-4 rounded-lg">
+          {formData.image && formData.image.map((link, idx) => (
+            <img src={link} key={idx} alt="No image uploaded" className='text-[#f5f5f5] max-w-[200px] rounded-lg' />
+          ))}
+        </div>
 
       </div>
     </>

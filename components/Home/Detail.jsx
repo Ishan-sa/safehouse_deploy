@@ -1,32 +1,42 @@
 import { CenterContainer } from "../../styles/styledComps";
-import Image from "../D3Components/Image/ImageComp.jsx";
 import Button from "../D3Components/Button/Button";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Ammenities from "../D3Components/Listings/ammenities";
 import Info from "../D3Components/Listings/info";
 import Description from "../D3Components/Listings/description";
 import Rules from "../D3Components/Listings/rules";
-import Chat from "../../pages/chat";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import Navbar from "../../components/D3Components/Navbar/Navbar";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { doc, getDoc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import Swiper from "../D3Components/Swiper/Swiper";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useAuth } from "../../AuthContext/AuthContext";
 
 const Detail = ({ state }) => {
   const router = useRouter();
   const [isEdit, setIsEdit] = useState(false);
   const id = router.query.id;
+  const { currentUser } = useAuth();
+  const [isAuth, setIsAuth] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
+  useEffect(() => {
+    if (currentUser?.uid === state?.userId) {
+      setIsAuth(true);
+    }
+  }, [useAuth(), currentUser]);
+
   const editHandler = () => {
     setIsEdit(true);
     router.push("/edit/" + id);
     return;
   };
 
-  const buttonHandler = () => {};
+  const buttonHandler = () => {
+    setIsClicked(true);
+  };
 
   const deleteHandler = () => {
     const docRef = doc(db, "homes", id);
@@ -38,22 +48,29 @@ const Detail = ({ state }) => {
   return (
     <>
       <div>
-        <div className="absolute w-full h-auto"></div>
-        <Swiper imgSrc={state.image ? state.image : ""} />
-        <div className="flex justify-around border-y-2 border-[#888] py-4 mb-4">
-          <div>
-            <EditIcon sx={{ color: "#4A4A4A" }} />
-            <button className="text-[#808080]" onClick={editHandler}>
-              Edit Listing
-            </button>
-          </div>
-          <div>
-            <DeleteIcon sx={{ color: "#4A4A4A" }} />
-            <button className="text-[#808080]" onClick={deleteHandler}>
-              Delete Listing
-            </button>
-          </div>
+        <div className="absolute z-[99] top-[10px] left-[10px] bg-[#333] rounded-full p-[2px] cursor-pointer">
+          <ArrowBackIcon
+            sx={{ color: "white" }}
+            onClick={() => router.push("/userhome")}
+          />
         </div>
+        <Swiper imgSrc={state.image ? state.image : ""} />
+        {isAuth && (
+          <div className="flex justify-around border-y-2 border-[#888] py-4 mb-4">
+            <div>
+              <EditIcon sx={{ color: "#4A4A4A" }} />
+              <button className="text-[#808080]" onClick={editHandler}>
+                Edit Listing
+              </button>
+            </div>
+            <div>
+              <DeleteIcon sx={{ color: "#4A4A4A" }} />
+              <button className="text-[#808080]" onClick={deleteHandler}>
+                Delete Listing
+              </button>
+            </div>
+          </div>
+        )}
         <div className="flex flex-col items-left justify-left ml-5">
           <Info state={state} />
           <Description state={state} />
@@ -70,6 +87,13 @@ const Detail = ({ state }) => {
             />
           </div>
         </CenterContainer>
+        {isClicked && (
+          <div className="h-[100px]">
+            contact {state?.userName ? state.userName : "Owner"} at
+            {state?.phoneNumber ? state.phoneNumber : ""} or email at
+            {state?.email ? state.email : ""}
+          </div>
+        )}
       </div>
     </>
   );

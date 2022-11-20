@@ -4,25 +4,43 @@ import { useAuth } from "../../AuthContext/AuthContext";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/router'
 import Button from '../D3Components/Button/Button'
-import Image from "next/image";
-import { auth } from '../../firebase'
+import { auth, storage } from '../../firebase'
+import { ref, uploadBytes, listAll, getDownloadURL, deleteObject } from 'firebase/storage'
 import { updateProfile } from "firebase/auth";
-export default function HostDetail({
+import { v4 } from 'uuid'
+import EditIcon from '@mui/icons-material/Edit';
+import AddBoxIcon from '@mui/icons-material/AddBox';
 
+export default function HostDetail({
   state = [{ userId: "" }, { userId: "" }],
 }) {
 
-  const [data, setData] = useState(state);  
   const { currentUser, logout } = useAuth();
-  console.log(currentUser)
-  // console.log(currentUser.providerData[0].providerId);
-  //google.com
+
+  useEffect(() => {
+    if (currentUser === null) {
+      router.push('/auth/login')
+    }
+  }, [currentUser])
+
+  const router = useRouter()
+  const [data, setData] = useState(state);
   const [open, setOpen] = useState(false);
+
+  const [url, setUrl] = useState(currentUser?.photoURL);
+  const [uploadOpen, setUploadOpen] = useState(false);
+
   const inputAreaRef = useRef();
+
+
+  async function handleLogout() {
+    await logout()
+    router.push('/auth/login')
+  }
 
   useEffect(() => {
     if (state.length > 0) {
-      setData(state.filter(item => item.userId === currentUser.uid));
+      setData(state.filter(item => item.userId === currentUser?.uid));
     }
   }, [state]);
   const findCurrentPage = id => {
@@ -31,20 +49,6 @@ export default function HostDetail({
     }
     return;
   };
-  const router = useRouter()
-  async function handleLogout() {
-    await logout()
-    router.push('/auth/login')
-  }
-
-  async function handleUpdate() {
-    console.log(currentUser)
-  }
-
-  async function clikeImage() {
-    console.log("click")
-    setOpen(true)
-  }
 
   useEffect(() => {
     const checkIfClickedOutside = e => {
@@ -59,98 +63,116 @@ export default function HostDetail({
     };
   }, []);
 
-  const [isHovering, setIsHovering] = useState(false);
+  const imageListRef = ref(storage, `PImages/${currentUser?.uid}`)
 
-  const handleMouseOver = () => {
-    setIsHovering(true);
-  };
 
-  const handleMouseOut = () => {
-    setIsHovering(false);
-  };
-  const [image, setImage] = useState(null);
-  const [createObjectURL, setCreateObjectURL] = useState(null);
-  console.log(createObjectURL)
-  async function uploadToClient(e) {
+
+  useEffect(() => {
+    if (imageListRef !== null && imageListRef !== undefined) {
+      listAll(imageListRef).then((res) => {
+        if (res.items.length > 0) {
+          getDownloadURL(res.items[0]).then((url) => {
+            setUrl(url)
+            updateProfile(auth.currentUser, {
+              photoURL: url
+            })
+          })
+        }
+      })
+    }
+  }, [])
+
+
+  function uploadToClient(e) {
     e.preventDefault()
-    console.log(e.target.files[0])
     if (e.target.files && e.target.files[0]) {
+      setImageUpload(e.target.files[0])
       const i = e.target.files[0];
-      setImage(i);
-      setCreateObjectURL(URL.createObjectURL(i));
+      setUrl(URL.createObjectURL(i));
+      setOpen(false)
+      setUploadOpen(true)
     }
   }
 
-  const uploadToServer = async (event) => {
-    await updateProfile(auth.currentUser, {
-      photoURL: createObjectURL
+  const listImageRef = ref(storage, `PImages/${currentUser?.uid}`)
+
+  const [imageUpload, setImageUpload] = useState(null)
+
+  function uploadImagetoFirebase() {
+    if (imageUpload === null) {
+      return
+    }
+    const storageRef = ref(storage, `PImages/${currentUser?.uid}/${imageUpload.name + v4()}`)
+    listAll(listImageRef).then((res) => {
+      if (res.items.length === 0) {
+        uploadBytes(storageRef, imageUpload).then((snapshot) => {
+          console.log('Uploaded a blob or file!');
+        });
+      } else {
+        res.items.forEach((itemRef) => {
+          deleteObject(itemRef)
+            .then(() => {
+              uploadBytes(storageRef, imageUpload).then((snapshot) => {
+                console.log('Uploaded a blob or file!');
+              })
+                .catch((error) => {
+                  console.log(error, "failed to upload")
+                }).catch((error) => {
+                  console.log(error, "failed to delete")
+                }).catch((error) => {
+                  console.log(error, "failed to get")
+                })
+            })
+        })
+      }
     })
-    setOpen(false)
-  
-    setCreateObjectURL(null)
-  };
-
-  function handleImage() {
-    if(createObjectURL === null){
-      return currentUser.photoURL
-    }else{
-      return createObjectURL
-    }
+    setUploadOpen(false)
   }
-  
-  console.log("image", image)
-  console.log("createObjectURL", createObjectURL)
+
   return (
-    <>
-      <div>
-        <Button
-          txt="update account"
-          onBtnClick={handleUpdate}
-          borderRadius="8px"
-          margin="20px 0 0 0"
-        /> <br />
-        <Button
-          txt="logout"
-          onBtnClick={handleLogout}
-          borderRadius="8px"
-          margin="20px 0 0 0"
-        />
-
-
-        <p>Hope you are having a great day!</p>
-
-        <div ref={inputAreaRef}  >
-          <div
-            onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}
-            onClick={clikeImage} style={{ borderRadius: '50%', overflow: 'hidden', width: '200px', height: '200px' }}>
-            <img width="100%" height="100%" src={currentUser.photoURL} />
+    <div className="flex flex-col justify-center items-center gap-3">
+      <div className="flex w-[100%]">
+        <div ref={inputAreaRef} className="w-full flex">
+          <div className="absolute z-99 bg-blue-300 p-2 bottom-[100] right-[0] mt-2 mr-2 rounded-lg drop-shadow-lg">
+            <EditIcon
+              onClick={() => setOpen(true)}
+            />
           </div>
-          {createObjectURL &&
+          <div
+            className="w-full"
+          // onClick={clickImage}
+          >
+            <img className="w-full h-full" src={url} />
+          </div>
 
-            <Button
-              txt="Upload image"
-              onBtnClick={uploadToServer}
-              borderRadius="8px"
-              margin="20px 0 0 0"
-            />}
-          {isHovering && <h2>Click image to update profile</h2>}
-
-          {open && <div className='r-box flex flex-row gap-4 bg-[#f5f5f5] px-4 py-4 justify-start items-center rounded-md'>
-            <input type="file" name="myImage" onChange={uploadToClient} />
-          </div>}
+          {uploadOpen &&
+            // <Button
+            //   txt="Upload image"
+            //   onBtnClick={uploadImagetoFirebase}
+            //   borderRadius="8px"
+            //   margin="20px 0 0 0"
+            // />
+            alert("Image Uploaded", uploadImagetoFirebase())
+          }
+          {open &&
+            <div className='r-box flex flex-row gap-4 bg-[#f5f5f5] px-4 py-4 justify-start items-center rounded-md'>
+              <input type="file" name="myImage" onChange={uploadToClient} />
+            </div>
+          }
         </div>
-
-
       </div>
-      <div className="flex flex-col gap-3">
+
+      <div className="flex flex-col justify-center items-center mb-5">
         <AppText
           txt={
             currentUser?.displayName
-              ? `Hello ${currentUser.displayName?.split(" ")[0]} 👋`
+              ? `Hello, ${currentUser.displayName?.split(" ")[0]} 👋`
               : "Hello 👋"
           }
           fontSize="34px"
         />
+        <p className="text-lg">Hope you are having a great day!</p>
+        <p className="text-gray-500">Not {currentUser?.displayName?.split(" ")[0] || "Hello"} ?<span className="text-blue-600" onClick={handleLogout}> Sign Out</span> </p>
         {/* <AppText
           txt="What do you want to do ?"
           fontSize="16px"
@@ -158,8 +180,11 @@ export default function HostDetail({
         /> */}
       </div>
 
-      <div key={self.crypto.randomUUID()} className="flex flex-col pt-10 justify-start items-start gap-3">
-        <AppText txt="Your postings" fontSize="20px" />
+      <div key={self.crypto.randomUUID()} className="flex flex-col justify-center items-start gap-2 px-5 pb-[50px]">
+        <div className="flex flex-row items-center w-full justify-between">
+          <AppText txt="Your postings" fontSize="18px" fontWeight="500" />
+          <Button txt="Add new" fontSize="16px" borderRadius="4px" endIcon={<AddBoxIcon />} onBtnClick={() => router.push('/PostHome')} />
+        </div>
         {data.length > 0 ? (
           data.map(item => (
             <>
@@ -189,6 +214,7 @@ export default function HostDetail({
           <ReviewBox />
         </div>
       </div> */}
-    </>
+    </div >
   );
+
 }

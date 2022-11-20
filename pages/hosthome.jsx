@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { MainContainer, LeftContainer } from "../styles/styledComps";
 import Navbar from "../components/D3Components/Navbar/Navbar";
 import { AuthProvider } from "../AuthContext/AuthContext";
 import HostDetail from "../components/Host/detail";
 import { db } from "../firebase";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+
 
 export default function HostHome() {
   const [state, setState] = useState({
@@ -27,15 +26,11 @@ export default function HostHome() {
     return unsubscribe;
   }, []);
   return (
-    <AuthProvider>
-      <div className="flex flex-col justify-center items-center">
-        <MainContainer>
-          <LeftContainer>
-            <HostDetail state={state} />
-          </LeftContainer>
-        </MainContainer>
+    <>
+      <AuthProvider>
+        <HostDetail state={state} />
         <Navbar />
-      </div>
-    </AuthProvider>
+      </AuthProvider>
+    </>
   );
 }
