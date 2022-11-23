@@ -31,7 +31,7 @@ export default function Support() {
                             </div>
                             <div className="flex flex-col gap-1 justify-start items-start">
                                 <AppText txt="Email Us" fontSize="1.5rem" />
-                                <AppText txt="Get solution beamed to your inbox." fontSize="1rem" color="#8C8C8C" />
+                                <AppText txt="Reach us at hello@safehouseapp.ca" textDecoration="underline" fontSize="1rem" color="#8C8C8C" />
                             </div>
                         </motion.div>
                     </a>
