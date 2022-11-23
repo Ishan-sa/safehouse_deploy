@@ -38,7 +38,6 @@ export default function Slider({
   },
 }) {
   const router = useRouter();
-  const items = new Array(20).fill(0);
   const findCurrentPage = id => {
     if (state.length) {
       return state.findIndex(obj => obj.id === id);
@@ -53,7 +52,8 @@ export default function Slider({
         alignItems: "flex-start",
         overflowX: "auto",
         width: "100vw",
-        maxWidth: "80vw",
+        paddingLeft: "20px",
+        // maxWidth: "80vw",
         msOverflowStyle: "none",
         scrollbarWidth: "none",
         backgroundColor: "#fff",
@@ -71,8 +71,8 @@ export default function Slider({
               post.addressLine1
                 ? post.addressLine1
                 : "" + ", " + post.city
-                ? post.city
-                : ""
+                  ? post.city
+                  : ""
             }
             color="#f5f5f5"
             fontSize="24px"

@@ -85,6 +85,7 @@ export default function UserHome({ data }) {
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0 }}
+              className="px-5"
             >
               <Input
                 label="Search here"
@@ -100,6 +101,7 @@ export default function UserHome({ data }) {
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.1 }}
+                className="pl-5"
               >
                 <AppText
                   txt="Recent Listings"
@@ -109,7 +111,7 @@ export default function UserHome({ data }) {
                 />
               </motion.div>
 
-              <motion.div className="flex flex-row gap-7 w-full h-full"
+              <motion.div className="flex flex-row gap-7"
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -122,6 +124,7 @@ export default function UserHome({ data }) {
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
+              className="px-5"
             >
               <AppText
                 txt="Latest data on wildfires and safehouses"
@@ -135,6 +138,7 @@ export default function UserHome({ data }) {
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
+              className="px-5"
             >
               <AppText
                 txt="Filter by:"
@@ -142,7 +146,7 @@ export default function UserHome({ data }) {
                 padding="20px 0px 10px 0px"
               />
             </motion.div>
-            <motion.div className="dropd flex bg-[#fff] text-[#8C8C8C] gap-20 w-[234px] rounded-md justify-start"
+            <motion.div className="flex flex-start px-5"
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
@@ -150,7 +154,7 @@ export default function UserHome({ data }) {
               <select
                 name="map"
                 id="mapHome"
-                className="py-3 px-3 text-[#8c8c8c] bg-[#fff] ml-3"
+                className="py-3 px-5 text-[#8c8c8c] bg-[#fff] rounded-md"
                 onChange={selectHandler}
               >
                 <option value="Wildfires">Wildfires</option>
@@ -158,7 +162,7 @@ export default function UserHome({ data }) {
                 <option value="Both">Both</option>
               </select>
             </motion.div>
-            <motion.div className="flex w-[90vw]"
+            <motion.div className="flex w-[80vw] px-5 mapContainerUserhome pb-10 googleMapCont"
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
@@ -175,6 +179,9 @@ export default function UserHome({ data }) {
                 hostInfo={state}
                 isClicked={isClicked}
                 isBothClicked={isBothClicked}
+                btnState={true}
+                width="90vw"
+                height="50vh"
               />
             </motion.div>
           </MainContainer>
